@@ -1,6 +1,5 @@
 package com.example.endpoints.controller;
 
-import com.example.dto.WeatherResponseDto;
 import com.example.model.Weather;
 import com.example.service.WeatherService;
 import io.swagger.v3.oas.annotations.Operation;

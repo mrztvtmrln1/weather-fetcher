@@ -9,7 +9,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface WeatherMapper {
 
-    @Mapping(target = "temperature", source = ".", qualifiedByName = "extractTemp")
+    @Mapping(target = "temperature", source = ".", qualifiedByName = "extractTemperature")
     @Mapping(target = "pressure", source = ".", qualifiedByName = "extractPressure")
     @Mapping(target = "humidity", source = ".", qualifiedByName = "extractHumidity")
     @Mapping(target = "windSpeed", source = ".", qualifiedByName = "extractWindSpeed")
@@ -18,36 +18,31 @@ public interface WeatherMapper {
     @Mapping(target = "city", ignore = true)
     Weather toEntity(WeatherResponseDto dto);
 
-    @Named("extractTemp")
-    static Double extractTemp(WeatherResponseDto dto) {
-        Object val = dto.main().get("temp");
-        return val != null ? Double.parseDouble(val.toString()) : null;
+    @Named("extractTemperature")
+    static Double extractTemperature(WeatherResponseDto dto) {
+        return dto.main() != null ? dto.main().temp() : null;
     }
 
     @Named("extractPressure")
     static Integer extractPressure(WeatherResponseDto dto) {
-        Object val = dto.main().get("pressure");
-        return val != null ? Integer.parseInt(val.toString()) : null;
+        return dto.main() != null ? dto.main().pressure() : null;
     }
 
     @Named("extractHumidity")
     static Integer extractHumidity(WeatherResponseDto dto) {
-        Object val = dto.main().get("humidity");
-        return val != null ? Integer.parseInt(val.toString()) : null;
+        return dto.main() != null ? dto.main().humidity() : null;
     }
 
     @Named("extractWindSpeed")
     static Double extractWindSpeed(WeatherResponseDto dto) {
-        Object val = dto.wind().get("speed");
-        return val != null ? Double.parseDouble(val.toString()) : null;
+        return dto.wind() != null ? dto.wind().speed() : null;
     }
 
     @Named("extractDescription")
     static String extractDescription(WeatherResponseDto dto) {
         if (dto.weather() != null && !dto.weather().isEmpty()) {
-            return dto.weather().get(0).get("description");
+            return dto.weather().get(0).description();
         }
         return null;
     }
 }
-
