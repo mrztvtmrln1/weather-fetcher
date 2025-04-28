@@ -12,8 +12,6 @@ import com.example.repository.CityRepository;
 import com.example.repository.WeatherRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,6 +51,9 @@ public class WeatherService {
 
     public boolean needToSendToQueue(String city,WeatherResponseDto weatherResponseDto) {
         Double currentTemp = weatherResponseDto.main().temp();
+        if(cache.get(city) == null) {
+            return true;
+        }
         Double lastTemp = cache.get(city).main().temp();
         return currentTemp - lastTemp >= 5.0 || currentTemp - lastTemp <= -5.0;
     }
@@ -65,9 +66,11 @@ public class WeatherService {
                 .orElseThrow(() -> new CityNotFoundException("City not found"));
         Weather weather = weatherMapper.toEntity(weatherResponseDto);
         weather.setCity(city);
+
         if(needToSendToQueue(cityName,weatherResponseDto)){
             rabbitMQSender.send(weatherResponseDto);
         }
+
         return weatherRepository.save(weather);
     }
 }
