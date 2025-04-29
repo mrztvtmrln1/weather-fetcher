@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 
-
 @Service
 public class WeatherService {
     private final WeatherClient weatherClient;
@@ -25,9 +24,11 @@ public class WeatherService {
     private final OpenWeatherConfig openWeatherConfig;
     private final RabbitMQSender rabbitMQSender;
 
-    HashMap<String,WeatherResponseDto> cache = new HashMap<String,WeatherResponseDto>();
+    HashMap<String,WeatherResponseDto> cache = new HashMap<>();
 
-    public WeatherService(WeatherClient weatherClient, WeatherMapper weatherMapper, CityRepository cityRepository, WeatherRepository weatherRepository, OpenWeatherConfig openWeatherConfig, RabbitMQSender rabbitMQSender) {
+    public WeatherService(WeatherClient weatherClient, WeatherMapper weatherMapper,
+                          CityRepository cityRepository, WeatherRepository weatherRepository,
+                          OpenWeatherConfig openWeatherConfig, RabbitMQSender rabbitMQSender) {
         this.weatherClient = weatherClient;
         this.weatherMapper = weatherMapper;
         this.cityRepository = cityRepository;
@@ -49,15 +50,36 @@ public class WeatherService {
         }
     }
 
-    public boolean needToSendToQueue(String city,WeatherResponseDto weatherResponseDto) {
-        Double currentTemp = weatherResponseDto.main().temp();
-        if(cache.get(city) == null) {
+    public boolean needToSendToQueue(String city, WeatherResponseDto weatherResponseDto) {
+        WeatherResponseDto lastWeather = cache.get(city);
+        if (lastWeather == null) {
             return true;
         }
-        Double lastTemp = cache.get(city).main().temp();
-        return currentTemp - lastTemp >= 5.0 || currentTemp - lastTemp <= -5.0;
-    }
 
+        Double currentTemp = weatherResponseDto.main().temp();
+        Integer currentPressure = weatherResponseDto.main().pressure();
+        Integer currentHumidity = weatherResponseDto.main().humidity();
+        Double currentWindSpeed = weatherResponseDto.wind().speed();
+
+        Double lastTemp = lastWeather.main().temp();
+        Integer lastPressure = lastWeather.main().pressure();
+        Integer lastHumidity = lastWeather.main().humidity();
+        Double lastWindSpeed = lastWeather.wind().speed();
+
+        if (!currentTemp.equals(lastTemp)) {
+            return true;
+        }
+        if (Math.abs(currentPressure - lastPressure) / (double) lastPressure * 100 >= 10) {
+            return true;
+        }
+        if (Math.abs(currentHumidity - lastHumidity) / (double) lastHumidity * 100 >= 10) {
+            return true;
+        }
+        if (Math.abs(currentWindSpeed - lastWindSpeed) / lastWindSpeed * 100 >= 10) {
+            return true;
+        }
+        return false;
+    }
 
     public Weather getWeather(String cityName) {
         WeatherResponseDto weatherResponseDto = weatherClient
@@ -69,6 +91,7 @@ public class WeatherService {
 
         if(needToSendToQueue(cityName,weatherResponseDto)){
             rabbitMQSender.send(weatherResponseDto);
+            cache.put(cityName,weatherResponseDto);
         }
 
         return weatherRepository.save(weather);
