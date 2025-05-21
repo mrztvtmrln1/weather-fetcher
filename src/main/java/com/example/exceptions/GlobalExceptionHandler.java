@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler(CityNotFoundException.class)
     public ResponseEntity<String> handleCityNotFound(CityNotFoundException ex) {
-        return ResponseEntity.status(422).body(ex.getMessage());
+        return ResponseEntity.status(404).body(ex.getMessage());
     }
 }

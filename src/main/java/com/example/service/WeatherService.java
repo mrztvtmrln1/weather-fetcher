@@ -75,10 +75,7 @@ public class WeatherService {
         if (Math.abs(currentHumidity - lastHumidity) / (double) lastHumidity * 100 >= 10) {
             return true;
         }
-        if (Math.abs(currentWindSpeed - lastWindSpeed) / lastWindSpeed * 100 >= 10) {
-            return true;
-        }
-        return false;
+        return Math.abs(currentWindSpeed - lastWindSpeed) / lastWindSpeed * 100 >= 10;
     }
 
     public Weather getWeather(String cityName) {
@@ -91,6 +88,7 @@ public class WeatherService {
 
         if(needToSendToQueue(cityName,weatherResponseDto)){
             rabbitMQSender.send(weatherResponseDto);
+            System.out.println("Sending weather to RabbitMQ");
             cache.put(cityName,weatherResponseDto);
         }
 
