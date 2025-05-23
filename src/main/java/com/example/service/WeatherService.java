@@ -10,12 +10,14 @@ import com.example.model.City;
 import com.example.model.Weather;
 import com.example.repository.CityRepository;
 import com.example.repository.WeatherRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class WeatherService {
     private final WeatherClient weatherClient;
     private final WeatherMapper weatherMapper;
@@ -25,17 +27,6 @@ public class WeatherService {
     private final RabbitMQSender rabbitMQSender;
 
     HashMap<String,WeatherResponseDto> cache = new HashMap<>();
-
-    public WeatherService(WeatherClient weatherClient, WeatherMapper weatherMapper,
-                          CityRepository cityRepository, WeatherRepository weatherRepository,
-                          OpenWeatherConfig openWeatherConfig, RabbitMQSender rabbitMQSender) {
-        this.weatherClient = weatherClient;
-        this.weatherMapper = weatherMapper;
-        this.cityRepository = cityRepository;
-        this.weatherRepository = weatherRepository;
-        this.openWeatherConfig = openWeatherConfig;
-        this.rabbitMQSender = rabbitMQSender;
-    }
 
     @Scheduled(cron = "0 0 * * * *")
     public void fetchWeatherForAllCities() {
