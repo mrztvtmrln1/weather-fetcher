@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "openweather.api")
 public class OpenWeatherConfig {
     private String key;
-
     public String getKey() {
         return key;
     }
