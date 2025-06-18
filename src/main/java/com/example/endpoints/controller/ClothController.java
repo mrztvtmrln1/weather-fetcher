@@ -1,6 +1,5 @@
 package com.example.endpoints.controller;
 
-import com.example.enums.ClothSeasonType;
 import com.example.model.Cloth;
 import com.example.service.ClothService;
 import io.swagger.v3.oas.annotations.tags.Tag;
