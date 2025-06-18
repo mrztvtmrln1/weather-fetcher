@@ -31,7 +31,6 @@ public class WeatherService {
     @Scheduled(cron = "0 42 * * * *")
     public void fetchWeatherForAllCities() {
         List<String> cities = cityRepository.getAllCityNames();
-//        List<String> cities = List.of("Almaty", "Nur-Sultan", "Shymkent");
         for (String city : cities) {
             try {
                 System.out.println("Fetching weather for " + city);
