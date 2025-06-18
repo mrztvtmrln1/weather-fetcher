@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.example.enums.ClothBodyType;
 import com.example.enums.ClothSeasonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,4 +20,7 @@ public class Cloth {
 
     @Enumerated(EnumType.STRING)
     private ClothSeasonType seasonType;
+
+    @Enumerated(EnumType.STRING)
+    private ClothBodyType bodyType;
 }

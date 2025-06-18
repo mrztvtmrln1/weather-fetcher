@@ -5,6 +5,7 @@ import com.example.service.ClothService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +17,7 @@ public class ClothController {
     private final ClothService clothService;
 
     @PostMapping
-    public Cloth createCloth(Cloth cloth) {
+    public Cloth createCloth(@RequestBody Cloth cloth) {
         return clothService.createCloth(cloth);
     }
 }
