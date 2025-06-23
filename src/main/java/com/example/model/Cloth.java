@@ -23,4 +23,10 @@ public class Cloth {
 
     @Enumerated(EnumType.STRING)
     private ClothBodyType bodyType;
+
+    private Integer minTemp;
+    private Integer maxTemp;
+
+    private Boolean isWearableInWind;
+
 }
