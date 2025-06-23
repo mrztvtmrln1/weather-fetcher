@@ -4,10 +4,9 @@ import com.example.model.Cloth;
 import com.example.service.ClothService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/cloth")
@@ -20,4 +19,10 @@ public class ClothController {
     public Cloth createCloth(@RequestBody Cloth cloth) {
         return clothService.createCloth(cloth);
     }
+
+    @GetMapping
+    public List<Cloth> clothForCity(@RequestParam String cityName) {
+        return clothService.clothesForDay(cityName);
+    }
+
 }

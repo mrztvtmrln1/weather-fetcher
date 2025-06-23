@@ -15,10 +15,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class WeatherService {
+
     private final WeatherClient weatherClient;
     private final WeatherMapper weatherMapper;
     private final CityRepository cityRepository;
@@ -84,5 +86,11 @@ public class WeatherService {
         }
 
         return weatherRepository.save(weather);
+    }
+
+    public Optional<Weather> getLastWeather(String cityName) {
+        City city = cityRepository.findByName(cityName)
+                .orElseThrow(() -> new RuntimeException("City not found: " + cityName));
+        return weatherRepository.findTopByCity_IdOrderByTimestampDesc(city.getId());
     }
 }
