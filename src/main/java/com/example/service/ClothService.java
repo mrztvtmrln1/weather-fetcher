@@ -26,8 +26,10 @@ public class ClothService {
     public List<Cloth> clothesForDay(String city){
        Weather weather = weatherService.getLastWeather(city)
                .orElseThrow(() -> new RuntimeException("Weather not found"));
+
        boolean isWearableInWind = weather.getWindSpeed() < 5.0;
-       List<Cloth> suitableClothes =  clothRepository.findByTempRangeAndWind((int)Math.round(weather.getTemperature()),isWearableInWind);
+       List<Cloth> suitableClothes =  clothRepository
+               .findByTempRangeAndWind((int)Math.round(weather.getTemperature()),isWearableInWind);
        Map<ClothBodyType,Cloth> map = new HashMap<>();
 
        List<Cloth> lookForDay = new ArrayList<>();
