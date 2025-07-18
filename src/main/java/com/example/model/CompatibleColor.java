@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.example.enums.ClothColors;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,10 +17,9 @@ public class CompatibleColor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
+    private ClothColors colorOne;
 
-    @Column(name = "color_one", nullable = false)
-    private String colorOne;
-
-    @Column(name = "color_two", nullable = false)
-    private String colorTwo;
+    @Enumerated(EnumType.STRING)
+    private ClothColors colorTwo;
 }

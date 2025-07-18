@@ -1,7 +1,9 @@
 package com.example.dto;
 
+import com.example.enums.ClothColors;
+
 public record ColorCompatibleDto(
-        String colorOne,
-        String colorTwo
+        ClothColors colorOne,
+        ClothColors colorTwo
 ) {
 }

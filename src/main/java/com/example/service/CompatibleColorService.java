@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.dto.ColorCompatibleDto;
+import com.example.enums.ClothColors;
 import com.example.mapper.CompatibleColorMapper;
 import com.example.model.CompatibleColor;
 import com.example.repository.CompatibleColorRepository;
@@ -13,7 +14,7 @@ public class CompatibleColorService {
     private final CompatibleColorRepository compatibleColorRepository;
     private final CompatibleColorMapper compatibleColorMapper;
 
-    public boolean areColorsCompatible(String color1, String color2) {
+    public boolean areColorsCompatible(ClothColors color1, ClothColors color2) {
         return compatibleColorRepository.findCompatible(color1, color2).isPresent();
     }
 
