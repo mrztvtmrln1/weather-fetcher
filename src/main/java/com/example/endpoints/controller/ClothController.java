@@ -3,6 +3,7 @@ package com.example.endpoints.controller;
 import com.example.model.Cloth;
 import com.example.service.ClothService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +16,9 @@ import java.util.List;
 public class ClothController {
     private final ClothService clothService;
 
-    @PostMapping
-    public Cloth createCloth(@RequestBody Cloth cloth) {
-        return clothService.createCloth(cloth);
+    @GetMapping("/all-cloth")
+    public List<Cloth> createCloth(@RequestParam String cityName) {
+        return clothService.allClothesForCity(cityName);
     }
 
     @GetMapping
