@@ -50,4 +50,8 @@ public class ClothService {
         return clothRepository.findByTempRangeAndWind((int)Math
                 .round(weather.getTemperature()),isWearableInWind);
     }
+
+    public Cloth save(Cloth cloth){
+        return clothRepository.save(cloth);
+    }
 }
