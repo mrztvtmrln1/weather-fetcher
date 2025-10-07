@@ -18,8 +18,9 @@ public class CompatibleColorService {
         return compatibleColorRepository.findCompatible(color1, color2).isPresent();
     }
 
-    public CompatibleColor addCompatibleColor(ColorCompatibleDto dto) {
+    public ColorCompatibleDto addCompatibleColor(ColorCompatibleDto dto) {
         CompatibleColor compatibleColor = compatibleColorMapper.toEntity(dto);
-        return compatibleColorRepository.save(compatibleColor);
+        var responseCompatibleColor = compatibleColorRepository.save(compatibleColor);
+        return compatibleColorMapper.toColorCompatibleDto(responseCompatibleColor);
     }
 }
