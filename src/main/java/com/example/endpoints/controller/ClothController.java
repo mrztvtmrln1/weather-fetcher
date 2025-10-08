@@ -1,5 +1,6 @@
 package com.example.endpoints.controller;
 
+import com.example.dto.CommonResponseDto;
 import com.example.model.Cloth;
 import com.example.service.ClothService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,8 +22,8 @@ public class ClothController {
     }
 
     @GetMapping
-    public List<Cloth> clothForCity(@RequestParam String cityName) {
-        return clothService.clothesForDay(cityName);
+    public CommonResponseDto<List<Cloth>> clothForCity(@RequestParam String cityName) {
+        return new CommonResponseDto<>(true, clothService.clothesForDay(cityName));
     }
     @PostMapping
     public Cloth addCloth(@RequestBody Cloth cloth) {
