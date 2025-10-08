@@ -1,7 +1,7 @@
 package com.example.endpoints.controller;
 
 import com.example.dto.ColorCompatibleDto;
-import com.example.model.CompatibleColor;
+import com.example.dto.CommonResponseDto;
 import com.example.service.CompatibleColorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +16,7 @@ public class CompatibleColorController {
     private final CompatibleColorService compatibleColorService;
 
     @PostMapping
-    public CompatibleColor addCompatibleColor(@RequestBody ColorCompatibleDto dto){
-        return compatibleColorService.addCompatibleColor(dto);
+    public CommonResponseDto<ColorCompatibleDto> addCompatibleColor(@RequestBody ColorCompatibleDto dto){
+        return new CommonResponseDto<>(true, compatibleColorService.addCompatibleColor(dto));
     }
 }

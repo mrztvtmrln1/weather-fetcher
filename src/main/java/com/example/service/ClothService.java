@@ -19,8 +19,7 @@ public class ClothService {
     private final CompatibleColorService compatibleColorService;
 
     public List<Cloth> clothesForDay(String city){
-       Weather weather = weatherService.getLastWeather(city)
-               .orElseThrow(() -> new RuntimeException("Weather not found"));
+       Weather weather = getActualWeather(city);
        boolean isWearableInWind = weather.getWindSpeed() < 5.0;
        List<Cloth> suitableClothes =  clothRepository
                .findByTempRangeAndWind((int)Math.round(weather.getTemperature()),isWearableInWind);
@@ -44,8 +43,7 @@ public class ClothService {
     }
 
     public List<Cloth> allClothesForCity(String city){
-        Weather weather = weatherService.getLastWeather(city)
-                .orElseThrow(() -> new RuntimeException("Weather not found"));
+        Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
         return clothRepository.findByTempRangeAndWind((int)Math
                 .round(weather.getTemperature()),isWearableInWind);
@@ -53,5 +51,10 @@ public class ClothService {
 
     public Cloth save(Cloth cloth){
         return clothRepository.save(cloth);
+    }
+
+    public Weather getActualWeather(String city){
+        return weatherService.getLastWeather(city)
+                .orElseThrow(() -> new RuntimeException("Weather not found"));
     }
 }
