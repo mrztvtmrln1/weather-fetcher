@@ -21,17 +21,20 @@ public class ClothService {
     public List<Cloth> clothesForDay(String city){
        Weather weather = getActualWeather(city);
        boolean isWearableInWind = weather.getWindSpeed() < 5.0;
+
        List<Cloth> suitableClothes =  clothRepository
                .findByTempRangeAndWind((int)Math.round(weather.getTemperature()),isWearableInWind);
        Map<ClothBodyType,Cloth> map = new HashMap<>();
        List<Cloth> suitableClothByColor = new ArrayList<>();
        suitableClothByColor.add(suitableClothes.getFirst());
-       for(int i=1;i<suitableClothes.size();i++){
+
+       for(int i = 1; i < suitableClothes.size(); i++){
            if(compatibleColorService.areColorsCompatible(suitableClothes
                    .get(i).getClothColor(),suitableClothes.get(i-1).getClothColor())){
                suitableClothByColor.add(suitableClothes.get(i));
            }
        }
+
        List<Cloth> lookForDay = new ArrayList<>();
        for(Cloth cloth : suitableClothByColor){
            if(!map.containsKey(cloth.getBodyType())){
