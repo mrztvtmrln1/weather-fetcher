@@ -6,5 +6,15 @@ public enum ClothColors {
     YELLOW,
     GREEN,
     BLACK,
-    WHITE
+    WHITE,
+    BROWN,
+    OCEAN_BLUE,
+    MAGENTA,
+    ORANGE,
+    PINK,
+    PURPLE,
+    CYAN,
+    LIGHT_GRAY,
+    GRAY,
+    LIME
 }
