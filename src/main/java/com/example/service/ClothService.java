@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -28,14 +29,14 @@ public class ClothService {
        List<Cloth> suitableClothByColor = new ArrayList<>();
        suitableClothByColor.add(suitableClothes.getFirst());
 
-       for(int i = 1; i < suitableClothes.size(); i++){
-           if(compatibleColorService.areColorsCompatible(suitableClothes
-                   .get(i).getClothColor(),suitableClothes.get(i-1).getClothColor())){
-               suitableClothByColor.add(suitableClothes.get(i));
-           }
-       }
+        IntStream.range(1, suitableClothes.size())
+                .filter(i -> compatibleColorService.areColorsCompatible(
+                        suitableClothes.get(i).getClothColor(),
+                        suitableClothes.get(i - 1).getClothColor()))
+                .mapToObj(suitableClothes::get)
+                .forEach(suitableClothByColor::add);
 
-       List<Cloth> lookForDay = new ArrayList<>();
+        List<Cloth> lookForDay = new ArrayList<>();
        for(Cloth cloth : suitableClothByColor){
            if(!map.containsKey(cloth.getBodyType())){
                map.put(cloth.getBodyType(),cloth);
