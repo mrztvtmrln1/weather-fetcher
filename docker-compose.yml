@@ -1,34 +1,53 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:15
-    container_name: my-postgres
+  pg:
+    image: postgres:16
     environment:
-      POSTGRES_DB: testdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-    ports:
-      - "5432:5432"
-    volumes:
-      - pg_data:/var/lib/postgresql/data
+      POSTGRES_DB: appdb
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app123
+    ports: ["5432:5432"]          # нужно, если хочешь подключаться с хоста
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U app -d appdb" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
-  weather-app:
+  rmq:
+    image: rabbitmq:3.13-management
+    environment:
+      RABBITMQ_DEFAULT_USER: app
+      RABBITMQ_DEFAULT_PASS: app123
+      RABBITMQ_DEFAULT_VHOST: /
+    ports: ["15672:15672", "5672:5672"]  # 15672 — UI, 5672 — AMQP (необязателен для внутренних вызовов)
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
     build: .
-    container_name: weather-app
     depends_on:
-      - postgres
-    ports:
-      - "8080:8080"
+      pg:
+        condition: service_healthy
+      rmq:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/testdb
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 1234
-    networks:
-      - backend
-
-volumes:
-  pg_data:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pg:5432/appdb
+      SPRING_DATASOURCE_USERNAME: app
+      SPRING_DATASOURCE_PASSWORD: app123
+      SPRING_RABBITMQ_HOST: rmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: app
+      SPRING_RABBITMQ_PASSWORD: app123
+      # при необходимости: SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports: ["8080:8080"]
+    restart: unless-stopped
 
 networks:
-  backend:
+  default:
+    name: appnet
+
+volumes:
+  pgdata: {}

@@ -105,6 +105,7 @@
     </dependencyManagement>
 
     <build>
+            <finalName>app</finalName>
         <plugins>
             <!-- Компилятор с поддержкой Java 21 и MapStruct -->
             <plugin>
