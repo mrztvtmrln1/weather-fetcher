@@ -5,7 +5,7 @@ import com.example.model.CompatibleColor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
+import java.util.List;
 import java.util.Optional;
 
 public interface CompatibleColorRepository extends JpaRepository<CompatibleColor, Integer> {
@@ -15,4 +15,12 @@ public interface CompatibleColorRepository extends JpaRepository<CompatibleColor
     Optional<CompatibleColor> findCompatible(
             ClothColors color1,
             ClothColors color2);
+
+    @Query("""
+        select distinct
+            case when c.colorOne = :color then c.colorTwo else c.colorOne end
+        from CompatibleColor c
+        where c.colorOne = :color or c.colorTwo = :color
+    """)
+    List<String> findCompatibleColors(@Param("color") ClothColors color);
 }
