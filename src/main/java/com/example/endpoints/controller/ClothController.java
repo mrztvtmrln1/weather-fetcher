@@ -22,7 +22,7 @@ public class ClothController {
     }
 
     @GetMapping
-    public CommonResponseDto<List<Cloth>> clothForCity(@RequestParam String cityName, @RequestParam int baseClothId) {
+    public CommonResponseDto<List<Cloth>> clothForCity(@RequestParam String cityName, @RequestParam Long baseClothId) {
         return new CommonResponseDto<>(true, clothService.clothesForDay(cityName, baseClothId));
     }
     @PostMapping
