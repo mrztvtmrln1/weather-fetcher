@@ -15,7 +15,7 @@ public class ClothService {
     private final ClothRepository clothRepository;
     private final WeatherService weatherService;
     private final CompatibleColorService compatibleColorService;
-
+//test
     public List<Cloth> clothesForDay(String city, Long baseClothId){
         Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
