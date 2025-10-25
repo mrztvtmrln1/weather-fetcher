@@ -22,8 +22,8 @@ public class ClothController {
     }
 
     @GetMapping
-    public CommonResponseDto<List<Cloth>> clothForCity(@RequestParam String cityName) {
-        return new CommonResponseDto<>(true, clothService.clothesForDay(cityName));
+    public CommonResponseDto<List<Cloth>> clothForCity(@RequestParam String cityName, @RequestParam Long baseClothId) {
+        return new CommonResponseDto<>(true, clothService.clothesForDay(cityName, baseClothId));
     }
     @PostMapping
     public Cloth addCloth(@RequestBody Cloth cloth) {

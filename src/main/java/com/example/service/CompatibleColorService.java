@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,10 @@ public class CompatibleColorService {
 
     public boolean areColorsCompatible(ClothColors color1, ClothColors color2) {
         return compatibleColorRepository.findCompatible(color1, color2).isPresent();
+    }
+
+    public List<String> allCompatibleColors(ClothColors color) {
+        return compatibleColorRepository.findCompatibleColors(color);
     }
 
     @Transactional
