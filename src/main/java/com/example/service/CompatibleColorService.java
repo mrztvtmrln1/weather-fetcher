@@ -33,19 +33,21 @@ public class CompatibleColorService {
         if (c1 == c2) {
             throw new IllegalArgumentException("Нельзя добавлять совместимость одного и того же цвета");
         }
-        if (compatibleColorRepository.findCompatible(c1, c2).isPresent()) {
-            throw new AlreadyExistsException("Совместимость %s–%s уже существует".formatted(c1, c2));
-        }
+
         dto = normalize(dto);
 
+        if (compatibleColorRepository.findCompatible(dto.colorOne(), dto.colorTwo()).isPresent()) {
+            throw new AlreadyExistsException("Совместимость %s–%s уже существует".formatted(dto.colorOne(), dto.colorTwo()));
+        }
+
         try {
-            var entity = compatibleColorMapper.toEntity(dto);
-            var saved = compatibleColorRepository.save(entity);
+            var saved = compatibleColorRepository.save(compatibleColorMapper.toEntity(dto));
             return compatibleColorMapper.toColorCompatibleDto(saved);
         } catch (DataIntegrityViolationException e) {
             throw new AlreadyExistsException("Такая совместимость уже существует", e);
         }
     }
+
 
     private ColorCompatibleDto normalize(ColorCompatibleDto dto) {
         var a = dto.colorOne();
