@@ -8,13 +8,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface CompatibleColorRepository extends JpaRepository<CompatibleColor, Integer> {
-    @Query("SELECT c FROM CompatibleColor c WHERE " +
-            "(c.colorOne = :color1 AND c.colorTwo = :color2) OR " +
-            "(c.colorOne = :color2 AND c.colorTwo = :color1)")
+public interface CompatibleColorRepository extends JpaRepository<CompatibleColor, Long> {
+    @Query("""
+    select c from CompatibleColor c
+    where (c.colorOne = :color1 and c.colorTwo = :color2)
+       or (c.colorOne = :color2 and c.colorTwo = :color1)
+    """)
     Optional<CompatibleColor> findCompatible(
-            ClothColors color1,
-            ClothColors color2);
+            @Param("color1") ClothColors color1,
+            @Param("color2") ClothColors color2);
 
     @Query("""
         select distinct

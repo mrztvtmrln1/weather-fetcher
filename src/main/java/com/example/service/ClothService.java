@@ -15,25 +15,27 @@ public class ClothService {
     private final ClothRepository clothRepository;
     private final WeatherService weatherService;
     private final CompatibleColorService compatibleColorService;
-//test
+
     public List<Cloth> clothesForDay(String city, Long baseClothId){
         Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
-
         List<Cloth> suitableClothes =  clothRepository
                .findByTempRangeAndWind((int)Math.round(weather.getTemperature()),isWearableInWind);
+        Optional<Cloth> baseCloth = getClothById(baseClothId);
+        List<String> allCompatibleColors = compatibleColorService.allCompatibleColors(baseCloth.get().getClothColor());
 
         List<Cloth> outfitForDay = new ArrayList<>();
 
-        Map<ClothBodyType, Cloth> clothesByType = new HashMap<>();
-        
-        Optional<Cloth> baseCloth = getClothById(baseClothId);
-        
-        List<String> allCompatibleColors = compatibleColorService.allCompatibleColors(baseCloth.get().getClothColor());
-        
-        for(Cloth cloth : suitableClothes){
-            if(allCompatibleColors.contains(cloth.getClothColor())){
+        Set<ClothBodyType> seenBodyTypes = new HashSet<>();
+        seenBodyTypes.add(baseCloth.get().getBodyType());
+        outfitForDay.add(baseCloth.get());
 
+        for(Cloth cloth : suitableClothes){
+            if(allCompatibleColors.contains(cloth.getClothColor().toString())){
+                if(!seenBodyTypes.contains(cloth.getBodyType())){
+                    outfitForDay.add(cloth);
+                    seenBodyTypes.add(cloth.getBodyType());
+                }
             }
         }
         return outfitForDay;
