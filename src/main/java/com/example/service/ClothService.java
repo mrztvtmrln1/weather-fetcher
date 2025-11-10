@@ -1,5 +1,6 @@
 package com.example.service;
 import com.example.enums.ClothBodyType;
+import com.example.enums.WearType;
 import com.example.model.Cloth;
 import com.example.model.Weather;
 import com.example.repository.ClothRepository;
@@ -16,30 +17,67 @@ public class ClothService {
     private final WeatherService weatherService;
     private final CompatibleColorService compatibleColorService;
 
-    public List<Cloth> clothesForDay(String city, Long baseClothId){
+    private static final int MAX_LAYERS_PER_BODY = 3;
+
+    public List<Cloth> clothesForDay(String city, Long baseClothId) {
         Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
-        List<Cloth> suitableClothes =  clothRepository
-               .findByTempRangeAndWind((int)Math.round(weather.getTemperature()),isWearableInWind);
-        Optional<Cloth> baseCloth = getClothById(baseClothId);
-        List<String> allCompatibleColors = compatibleColorService.allCompatibleColors(baseCloth.get().getClothColor());
 
-        List<Cloth> outfitForDay = new ArrayList<>();
+        List<Cloth> suitableClothes = clothRepository
+                .findByTempRangeAndWind((int) Math.round(weather.getTemperature()), isWearableInWind);
 
-        Set<ClothBodyType> seenBodyTypes = new HashSet<>();
-        seenBodyTypes.add(baseCloth.get().getBodyType());
-        outfitForDay.add(baseCloth.get());
+        Cloth baseCloth = getClothById(baseClothId)
+                .orElseThrow(() -> new IllegalArgumentException("Base cloth not found: " + baseClothId));
 
-        for(Cloth cloth : suitableClothes){
-            if(allCompatibleColors.contains(cloth.getClothColor().toString())){
-                if(!seenBodyTypes.contains(cloth.getBodyType())){
-                    outfitForDay.add(cloth);
-                    seenBodyTypes.add(cloth.getBodyType());
-                }
-            }
+        // если у базовой вещи нет уровня или части тела — это тоже надо обработать
+        if (baseCloth.getBodyType() == null || baseCloth.getWearType() == null) {
+            throw new IllegalStateException("Base cloth must have bodyType and wearType");
         }
-        return outfitForDay;
+
+        List<String> compatibleColors =
+                compatibleColorService.allCompatibleColors(baseCloth.getClothColor());
+
+        List<Cloth> result = new ArrayList<>();
+        result.add(baseCloth);
+
+        Map<ClothBodyType, EnumSet<WearType>> occupied = new HashMap<>();
+        occupied.put(baseCloth.getBodyType(), EnumSet.of(baseCloth.getWearType()));
+
+        for (Cloth cloth : suitableClothes) {
+            if (cloth.getId().equals(baseClothId)) continue;
+
+            if (cloth.getBodyType() == null || cloth.getWearType() == null) {
+                continue;
+            }
+
+            if (cloth.getClothColor() == null) {
+                continue;
+            }
+
+            if (!compatibleColors.contains(cloth.getClothColor().toString())) {
+                continue;
+            }
+
+            ClothBodyType bodyType = cloth.getBodyType();
+            WearType wearType = cloth.getWearType();
+
+            EnumSet<WearType> used = occupied.get(bodyType);
+            if (used == null) {
+                used = EnumSet.noneOf(WearType.class);
+                occupied.put(bodyType, used);
+            }
+
+            if (used.contains(wearType)) continue;
+            if (used.size() >= MAX_LAYERS_PER_BODY) continue;
+
+            result.add(cloth);
+            used.add(wearType);
+        }
+
+        return result;
     }
+
+
 
     public List<Cloth> allClothesForCity(String city){
         Weather weather = getActualWeather(city);
