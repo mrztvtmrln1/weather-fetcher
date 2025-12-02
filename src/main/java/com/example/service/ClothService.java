@@ -5,6 +5,7 @@ import com.example.model.Cloth;
 import com.example.model.Weather;
 import com.example.repository.ClothRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,12 +25,15 @@ public class ClothService {
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
 
         List<Cloth> suitableClothes = clothRepository
-                .findByTempRangeAndWind((int) Math.round(weather.getTemperature()), isWearableInWind);
+                .findByTempRangeAndWind(
+                        (int) Math.round(weather.getTemperature()),
+                        isWearableInWind,
+                        Pageable.unpaged()
+                );
 
         Cloth baseCloth = getClothById(baseClothId)
                 .orElseThrow(() -> new IllegalArgumentException("Base cloth not found: " + baseClothId));
 
-        // если у базовой вещи нет уровня или части тела — это тоже надо обработать
         if (baseCloth.getBodyType() == null || baseCloth.getWearType() == null) {
             throw new IllegalStateException("Base cloth must have bodyType and wearType");
         }
@@ -77,13 +81,11 @@ public class ClothService {
         return result;
     }
 
-
-
-    public List<Cloth> allClothesForCity(String city){
+    public List<Cloth> allClothesForCity(String city, Pageable pageable) {
         Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
         return clothRepository.findByTempRangeAndWind((int)Math
-                .round(weather.getTemperature()),isWearableInWind);
+                .round(weather.getTemperature()),isWearableInWind, pageable);
     }
 
     public Cloth save(Cloth cloth){
