@@ -36,4 +36,8 @@ public class Cloth {
 
     @Enumerated(EnumType.STRING)
     private WearType wearType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

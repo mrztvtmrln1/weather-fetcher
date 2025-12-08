@@ -5,6 +5,7 @@ import com.example.model.Cloth;
 import com.example.model.Weather;
 import com.example.repository.ClothRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,17 +20,21 @@ public class ClothService {
 
     private static final int MAX_LAYERS_PER_BODY = 3;
 
-    public List<Cloth> clothesForDay(String city, Long baseClothId) {
+    public List<Cloth> clothesForDay(String city, Long baseClothId, Long userId) {
         Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
 
         List<Cloth> suitableClothes = clothRepository
-                .findByTempRangeAndWind((int) Math.round(weather.getTemperature()), isWearableInWind);
+                .findByUserAndTempRangeAndWind(
+                        userId,
+                        (int) Math.round(weather.getTemperature()),
+                        isWearableInWind,
+                        Pageable.unpaged()
+                );
 
         Cloth baseCloth = getClothById(baseClothId)
                 .orElseThrow(() -> new IllegalArgumentException("Base cloth not found: " + baseClothId));
 
-        // если у базовой вещи нет уровня или части тела — это тоже надо обработать
         if (baseCloth.getBodyType() == null || baseCloth.getWearType() == null) {
             throw new IllegalStateException("Base cloth must have bodyType and wearType");
         }
@@ -77,13 +82,13 @@ public class ClothService {
         return result;
     }
 
-
-
-    public List<Cloth> allClothesForCity(String city){
+    public List<Cloth> allClothesForCity(String city,Long userId, Pageable pageable) {
         Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
-        return clothRepository.findByTempRangeAndWind((int)Math
-                .round(weather.getTemperature()),isWearableInWind);
+        return clothRepository.findByUserAndTempRangeAndWind(
+                userId,
+                (int)Math.round(weather.getTemperature())
+                ,isWearableInWind, pageable);
     }
 
     public Cloth save(Cloth cloth){
