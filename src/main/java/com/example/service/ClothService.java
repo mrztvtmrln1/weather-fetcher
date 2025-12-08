@@ -20,12 +20,13 @@ public class ClothService {
 
     private static final int MAX_LAYERS_PER_BODY = 3;
 
-    public List<Cloth> clothesForDay(String city, Long baseClothId) {
+    public List<Cloth> clothesForDay(String city, Long baseClothId, Long userId) {
         Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
 
         List<Cloth> suitableClothes = clothRepository
-                .findByTempRangeAndWind(
+                .findByUserAndTempRangeAndWind(
+                        userId,
                         (int) Math.round(weather.getTemperature()),
                         isWearableInWind,
                         Pageable.unpaged()
@@ -81,11 +82,13 @@ public class ClothService {
         return result;
     }
 
-    public List<Cloth> allClothesForCity(String city, Pageable pageable) {
+    public List<Cloth> allClothesForCity(String city,Long userId, Pageable pageable) {
         Weather weather = getActualWeather(city);
         boolean isWearableInWind = weather.getWindSpeed() < 5.0;
-        return clothRepository.findByTempRangeAndWind((int)Math
-                .round(weather.getTemperature()),isWearableInWind, pageable);
+        return clothRepository.findByUserAndTempRangeAndWind(
+                userId,
+                (int)Math.round(weather.getTemperature())
+                ,isWearableInWind, pageable);
     }
 
     public Cloth save(Cloth cloth){
