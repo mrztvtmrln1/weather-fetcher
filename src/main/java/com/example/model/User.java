@@ -7,7 +7,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "users")
 public class User {
@@ -27,4 +26,8 @@ public class User {
 
     @Column(name = "profile_id", nullable = false)
     private Integer profileId;
+
+    public User(Long id) {
+        this.id = id;
+    }
 }
