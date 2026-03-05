@@ -27,6 +27,9 @@ public class User {
     @Column(name = "profile_id", nullable = false)
     private Integer profileId;
 
+    @Column(name = "status", nullable = false)
+    private Boolean status;
+
     public User(Long id) {
         this.id = id;
     }
