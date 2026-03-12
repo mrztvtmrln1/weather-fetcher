@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.example.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,8 +28,9 @@ public class User {
     @Column(name = "profile_id", nullable = false)
     private Integer profileId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Boolean status;
+    private UserStatus status;
 
     public User(Long id) {
         this.id = id;
