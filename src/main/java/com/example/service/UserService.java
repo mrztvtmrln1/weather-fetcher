@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.dto.UserResponseDto;
+import com.example.enums.UserStatus;
 import com.example.mapper.UserMapper;
 import com.example.model.User;
 import com.example.repository.UserRepository;
@@ -17,7 +18,7 @@ public class UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
-    public User changeStatus(Long id, Boolean status){
+    public User changeStatus(Long id, UserStatus status){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setStatus(status);

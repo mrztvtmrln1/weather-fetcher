@@ -1,7 +1,9 @@
 package com.example.dto;
 
+import com.example.enums.UserStatus;
+
 public record ChangeStatusRequest(
         Long userId,
-        Boolean newStatus
+        UserStatus newStatus
 ) {
 }
