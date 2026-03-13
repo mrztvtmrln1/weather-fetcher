@@ -30,7 +30,7 @@ public class WeatherService {
 
     HashMap<String,WeatherResponseDto> cache = new HashMap<>();
 
-    @Scheduled(cron = "0 42 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void fetchWeatherForAllCities() {
         List<String> cities = cityRepository.getAllCityNames();
         for (String city : cities) {
