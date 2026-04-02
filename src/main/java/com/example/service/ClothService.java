@@ -78,7 +78,6 @@ public class ClothService {
             result.add(cloth);
             used.add(wearType);
         }
-
         return result;
     }
 

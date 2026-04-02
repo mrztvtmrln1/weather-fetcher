@@ -3,7 +3,10 @@ package com.example.endpoints.controller;
 import com.example.dto.ColorCompatibleDto;
 import com.example.dto.CommonResponseDto;
 import com.example.enums.ClothColors;
+import com.example.model.User;
+import com.example.model.UserDeactivationHistory;
 import com.example.service.CompatibleColorService;
+import com.example.service.UserDeactivationHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CompatibleColorController {
     private final CompatibleColorService compatibleColorService;
+    private final UserDeactivationHistoryService userDeactivationHistoryService;
 
     @PostMapping
     public CommonResponseDto<ColorCompatibleDto> addCompatibleColor(@RequestBody ColorCompatibleDto dto){
@@ -21,6 +25,10 @@ public class CompatibleColorController {
     @GetMapping
     public List<String> getAllCompatibleColors(@RequestParam ClothColors color) {
         return compatibleColorService.allCompatibleColors(color);
+    }
+    @GetMapping("/test")
+    public UserDeactivationHistory getLastUserDeactivationHistory(@RequestParam Long userId) {
+        return userDeactivationHistoryService.getLastUserDeactivationHistory(userId);
     }
 
 }
