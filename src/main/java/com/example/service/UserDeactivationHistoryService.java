@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.model.User;
 import com.example.model.UserDeactivationHistory;
 import com.example.repository.UserDeactivationHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,5 +12,9 @@ public class UserDeactivationHistoryService {
 
     public UserDeactivationHistory getLastUserDeactivationHistory(Long userId) {
         return userDeactivationHistoryRepository.findTopByUserIdOrderByDeactivationDateDesc(userId);
+    }
+
+    public UserDeactivationHistory save(UserDeactivationHistory userDeactivationHistory) {
+        return userDeactivationHistoryRepository.save(userDeactivationHistory);
     }
 }

@@ -26,9 +26,4 @@ public class CompatibleColorController {
     public List<String> getAllCompatibleColors(@RequestParam ClothColors color) {
         return compatibleColorService.allCompatibleColors(color);
     }
-    @GetMapping("/test")
-    public UserDeactivationHistory getLastUserDeactivationHistory(@RequestParam Long userId) {
-        return userDeactivationHistoryService.getLastUserDeactivationHistory(userId);
-    }
-
 }
