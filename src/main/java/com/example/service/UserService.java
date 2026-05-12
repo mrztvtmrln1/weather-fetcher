@@ -24,4 +24,9 @@ public class UserService {
         user.setStatus(status);
         return userRepository.save(user);
     }
+
+    public User getUserInfoById(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }

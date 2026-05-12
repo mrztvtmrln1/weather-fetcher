@@ -39,4 +39,24 @@ public class User {
     public Long getId() {
         return id;
     }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public Integer getProfileId() {
+        return profileId;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
 }
