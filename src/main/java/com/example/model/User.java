@@ -4,7 +4,7 @@ import com.example.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
+//@Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,5 +34,29 @@ public class User {
 
     public User(Long id) {
         this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public Integer getProfileId() {
+        return profileId;
+    }
+
+    public UserStatus getStatus() {
+        return status;
     }
 }

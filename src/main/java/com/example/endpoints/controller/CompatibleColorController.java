@@ -22,5 +22,4 @@ public class CompatibleColorController {
     public List<String> getAllCompatibleColors(@RequestParam ClothColors color) {
         return compatibleColorService.allCompatibleColors(color);
     }
-
 }
