@@ -19,7 +19,7 @@ public class UserTerminationJob {
     private final UserDeactivationHistoryService userDeactivationHistoryService;
     private final UserService userService;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void run(){
         List<User> allUsers = userService.getAllUsers();
         allUsers.forEach(u -> {
@@ -28,14 +28,13 @@ public class UserTerminationJob {
             if (userDeactivationHistory == null) {
                 return;
             }
-            if(userDeactivationHistory.getDeactivationReason() == DeactivationReasons.TEMP_BLOCK){
-                if(userDeactivationHistory.getDeactivationDate().isBefore(LocalDateTime.now().minusDays(30))) {
+            if(userDeactivationHistory.getDeactivationReason() == DeactivationReasons.TEMP_BLOCK
+                    && userDeactivationHistory.getDeactivationDate().isBefore(LocalDateTime.now().minusDays(30))){
                     log.info("UserTerminationJob started");
                     userDeactivationHistory.setDeactivationReason(DeactivationReasons.INACTIVE_BLOCK);
                     userDeactivationHistory.setDeactivationDate(LocalDateTime.now());
                     userDeactivationHistoryService.save(userDeactivationHistory);
                     log.info("User {} moved from TEMP_BLOCK to INACTIVE_BLOCK", userDeactivationHistory.getId());
-                }
             }
         });
     }
