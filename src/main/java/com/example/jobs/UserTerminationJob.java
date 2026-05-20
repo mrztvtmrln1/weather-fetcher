@@ -1,8 +1,11 @@
 package com.example.jobs;
 
-import com.example.enums.DeactivationReasons;
-import com.example.model.User;
+import com.example.enums.UserStatus;
 import com.example.model.UserDeactivationHistory;
+import com.example.model.job.UserBlockJobExecution;
+import com.example.repository.UserDeactivationHistoryRepository;
+import com.example.repository.job.UserBlockExecutionRepository;
+import com.example.service.UserBlockExecutionService;
 import com.example.service.UserDeactivationHistoryService;
 import com.example.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +21,34 @@ import java.util.List;
 public class UserTerminationJob {
     private final UserDeactivationHistoryService userDeactivationHistoryService;
     private final UserService userService;
+    private final UserBlockExecutionRepository userBlockExecutionRepository;
+    private final UserDeactivationHistoryRepository  userDeactivationHistoryRepository;
+    private final UserBlockExecutionService userBlockExecutionService;
 
     @Scheduled(cron = "0 0 * * * *")
     public void run(){
-        List<User> allUsers = userService.getAllUsers();
-        allUsers.forEach(u -> {
-            UserDeactivationHistory userDeactivationHistory = userDeactivationHistoryService
-                    .getLastUserDeactivationHistory(u.getId());
-            if (userDeactivationHistory == null) {
-                return;
-            }
-            if(userDeactivationHistory.getDeactivationReason() == DeactivationReasons.TEMP_BLOCK
-                    && userDeactivationHistory.getDeactivationDate().isBefore(LocalDateTime.now().minusDays(30))){
-                    log.info("UserTerminationJob started");
-                    userDeactivationHistory.setDeactivationReason(DeactivationReasons.INACTIVE_BLOCK);
-                    userDeactivationHistory.setDeactivationDate(LocalDateTime.now());
-                    userDeactivationHistoryService.save(userDeactivationHistory);
-                    log.info("User {} moved from TEMP_BLOCK to INACTIVE_BLOCK", userDeactivationHistory.getId());
-            }
+
+        LocalDateTime jobStartTime = LocalDateTime.now();
+
+        LocalDateTime from = userBlockExecutionRepository
+                .findById(UserBlockJobExecution.ID())
+                .map(UserBlockJobExecution::getCoverage_up_to)
+                .orElse(LocalDateTime.now().minusDays(30));
+
+        LocalDateTime to = LocalDateTime.now().minusDays(30).plusHours(1);
+
+        List<UserDeactivationHistory> allUsersToTerminate = getAllUsersToTerminate(from, to);
+
+        allUsersToTerminate.forEach(userDeactivationHistory -> {
+            userService.changeStatus(userDeactivationHistory.getUserId(), UserStatus.BLOCKED);
+            userDeactivationHistoryRepository.save(userDeactivationHistory);
+            //TODO
+
         });
     }
+
+    public List<UserDeactivationHistory> getAllUsersToTerminate(LocalDateTime from, LocalDateTime to){
+        return userDeactivationHistoryRepository.findAllUsersToTerminateInRange(from, to);
+    }
+
 }
