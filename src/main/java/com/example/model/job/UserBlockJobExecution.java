@@ -13,18 +13,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserBlockJobExecution {
-
-    private static final String ID = "merchant-termination-job-execution";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime coverage_up_to;
-    private Long users;
-    private LocalDateTime created_at;
-    private LocalDateTime completed_at;
-
-    public static String ID(){
-        return ID;
-    }
+    private LocalDateTime coverageUpTo;
+    private int users;
+    private LocalDateTime createdAt;
+    private LocalDateTime completedAt;
 }
