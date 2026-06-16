@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleCityNotFound(CityNotFoundException ex) {
         return ResponseEntity.status(404).body(ex.getMessage());
     }
-    @ExceptionHandler(OrderStatusMismatchException.class) // Твое кастомное исключение
+    @ExceptionHandler(OrderStatusMismatchException.class)
     public ResponseEntity<CommonResponseDto<String>> handleOrderStatusMismatch(OrderStatusMismatchException ex) {
         CommonResponseDto<String> response = new CommonResponseDto<>(false, ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
