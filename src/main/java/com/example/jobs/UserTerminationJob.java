@@ -26,7 +26,7 @@ public class UserTerminationJob {
     private final UserDeactivationHistoryRepository  userDeactivationHistoryRepository;
     private final UserBlockExecutionService userBlockExecutionService;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void run(){
 
         LocalDateTime jobStartTime = LocalDateTime.now();
