@@ -15,6 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OrderStatusMismatchException.class)
     public ResponseEntity<CommonResponseDto<String>> handleOrderStatusMismatch(OrderStatusMismatchException ex) {
         CommonResponseDto<String> response = new CommonResponseDto<>(false, ex.getMessage());
+
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
     }
 }
