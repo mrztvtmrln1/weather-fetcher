@@ -14,11 +14,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(OrderStatusMismatchException.class) // Твое кастомное исключение
     public ResponseEntity<CommonResponseDto<String>> handleOrderStatusMismatch(OrderStatusMismatchException ex) {
-
-        // Оборачиваем в твой CommonResponseDto (success = false, внутри сообщение об ошибке)
         CommonResponseDto<String> response = new CommonResponseDto<>(false, ex.getMessage());
-
-        // Возвращаем статус 422 (UNPROCESSABLE_ENTITY)
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
     }
 }
