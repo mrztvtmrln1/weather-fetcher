@@ -1,7 +1,9 @@
 package com.example.service.order;
 
 import com.example.dto.order.CreateOrderDto;
+import com.example.dto.order.DeliveryStatusChangeDto;
 import com.example.dto.order.StatusChangeOrderDto;
+import com.example.enums.order.DeliveryStatuses;
 import com.example.enums.order.OrderStatuses;
 import com.example.exceptions.OrderStatusMismatchException;
 import com.example.mapper.order.OrderMapper;
@@ -21,7 +23,8 @@ public class OrderService {
     }
     @Transactional
     public StatusChangeOrderDto changeStatus(StatusChangeOrderDto statusChangeOrderDto, Long orderId){
-        Order order = orderRepository.findById(orderId).get();
+        Order order = orderRepository.findById(orderId)
+                .isPresent() ? orderRepository.findById(orderId).get() : null;
         OrderStatuses currentFromStatus = statusChangeOrderDto.statusFrom();
         if (order.getOrderStatus() != statusChangeOrderDto.statusFrom()) {
             throw new OrderStatusMismatchException(
@@ -30,5 +33,22 @@ public class OrderService {
         }
         order.setOrderStatus(statusChangeOrderDto.statusTo());
         return new StatusChangeOrderDto(currentFromStatus, order.getOrderStatus());
+    }
+
+    @Transactional
+    public DeliveryStatusChangeDto deliveryStatusChange(DeliveryStatusChangeDto deliveryStatusChangeDto){
+        Order order = orderRepository.findById(deliveryStatusChangeDto.orderId())
+                .isPresent() ? orderRepository.findById(deliveryStatusChangeDto.orderId()).get() : null;
+
+        DeliveryStatuses currentFromStatus = deliveryStatusChangeDto.statusFrom();
+
+        if(order.getDeliveryStatus() != deliveryStatusChangeDto.statusFrom()) {
+            throw new OrderStatusMismatchException(
+                    "Current status is " + order.getDeliveryStatus() + " but you give " + deliveryStatusChangeDto.statusFrom()
+            );
+        }
+        order.setDeliveryStatus(deliveryStatusChangeDto.statusTo());
+
+        return new DeliveryStatusChangeDto(order.getId(), currentFromStatus,  deliveryStatusChangeDto.statusTo());
     }
 }

@@ -1,5 +1,6 @@
 package com.example.model.order;
 
+import com.example.enums.order.DeliveryStatuses;
 import com.example.enums.order.OrderStatuses;
 import com.example.enums.order.PaymentTypes;
 import com.example.model.User;
@@ -42,8 +43,9 @@ public class Order {
     @Column(name = "delivery_address")
     private String deliveryAddress;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "delivery_status")
-    private String deliveryStatus;
+    private DeliveryStatuses deliveryStatus;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
