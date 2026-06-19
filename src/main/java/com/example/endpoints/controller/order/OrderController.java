@@ -19,8 +19,7 @@ public class OrderController {
     }
 
     @PostMapping("/status-change")
-    public CommonResponseDto<StatusChangeOrderDto> statusChange(@RequestBody StatusChangeOrderDto statusChangeOrderDto,
-                                                                @RequestParam Long orderId) {
+    public CommonResponseDto<StatusChangeOrderDto> statusChange(@RequestBody StatusChangeOrderDto statusChangeOrderDto, @RequestParam Long orderId) {
         return new CommonResponseDto<>(true, orderService.changeStatus(statusChangeOrderDto, orderId));
     }
 }
