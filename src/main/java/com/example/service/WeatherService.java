@@ -3,7 +3,7 @@ package com.example.service;
 import com.example.config.OpenWeatherConfig;
 import com.example.dto.WeatherResponseDto;
 import com.example.endpoints.feign.WeatherClient;
-import com.example.endpoints.publisher.RabbitMQSender;
+import com.example.endpoints.publisher.KafkaProducer;
 import com.example.exceptions.CityNotFoundException;
 import com.example.mapper.WeatherMapper;
 import com.example.model.City;
@@ -26,7 +26,7 @@ public class WeatherService {
     private final CityRepository cityRepository;
     private final WeatherRepository weatherRepository;
     private final OpenWeatherConfig openWeatherConfig;
-    private final RabbitMQSender rabbitMQSender;
+    private final KafkaProducer kafkaProducer;
 
     HashMap<String,WeatherResponseDto> cache = new HashMap<>();
 
@@ -80,7 +80,7 @@ public class WeatherService {
         weather.setCity(city);
 
         if(needToSendToQueue(cityName,weatherResponseDto)){
-            rabbitMQSender.send(weatherResponseDto);
+            kafkaProducer.send(weatherResponseDto);
             System.out.println("Sending weather to RabbitMQ");
             cache.put(cityName,weatherResponseDto);
         }
