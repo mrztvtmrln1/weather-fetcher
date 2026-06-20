@@ -3,7 +3,7 @@ package com.example.service.service;
 import com.example.config.OpenWeatherConfig;
 import com.example.dto.WeatherResponseDto;
 import com.example.endpoints.feign.WeatherClient;
-import com.example.endpoints.publisher.RabbitMQSender;
+import com.example.endpoints.publisher.KafkaProducer;
 import com.example.mapper.WeatherMapper;
 import com.example.model.City;
 import com.example.model.Weather;
@@ -31,7 +31,7 @@ class WeatherServiceTest {
     @Mock private CityRepository cityRepository;
     @Mock private WeatherRepository weatherRepository;
     @Mock private OpenWeatherConfig openWeatherConfig;
-    @Mock private RabbitMQSender rabbitMQSender;
+    @Mock private KafkaProducer kafkaProducer;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +41,7 @@ class WeatherServiceTest {
                 cityRepository,
                 weatherRepository,
                 openWeatherConfig,
-                rabbitMQSender
+                kafkaProducer
         );
     }
 
@@ -67,7 +67,7 @@ class WeatherServiceTest {
 
         verify(cityRepository).findByName("Almaty");
         verify(weatherRepository).findTopByCity_IdOrderByTimestampDesc(42L);
-        verifyNoInteractions(weatherClient, weatherMapper, openWeatherConfig, rabbitMQSender);
+        verifyNoInteractions(weatherClient, weatherMapper, openWeatherConfig, kafkaProducer);
     }
     @Test
     void getWeather_returnsCurrentWeatherFromRepository() {
@@ -109,8 +109,8 @@ class WeatherServiceTest {
         assertSame(city, toSave.getCity(), "Должен проставиться city перед save()");
         assertSame(toSave, result, "Метод должен вернуть сохранённую сущность (то что вернул репозиторий)");
 
-        verify(rabbitMQSender).send(weatherResponseDto);
-        verifyNoMoreInteractions(rabbitMQSender);
+        verify(kafkaProducer).send(weatherResponseDto);
+        verifyNoMoreInteractions(kafkaProducer);
 
     }
 }
